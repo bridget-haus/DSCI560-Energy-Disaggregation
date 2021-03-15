@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 """
 Data is organized into a dictionary where key=house number and value= pandas dataframe for that house
@@ -8,7 +9,8 @@ My thought is to train on houses 1-4, test on houses 5-6
 I use abbreviation l_wd to stand for lighting/washer_dryer
 """
 
-path ='/Users/bridgethaus/PycharmProjects/DSCI560/' #set your path for low_freq directory here
+cwd = os.getcwd()
+path = f'{cwd}/'
 
 
 def gather_all_files(path):
