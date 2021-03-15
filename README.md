@@ -3,6 +3,7 @@ University of Southern California DSCI 560 Group Project for Energy Disaggregati
 
 
 LINK TO REDD DATASET: http://redd.csail.mit.edu/
+
 Username: redd
 Password: disaggregatetheenergy
 
