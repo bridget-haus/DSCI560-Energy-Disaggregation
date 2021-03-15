@@ -13,3 +13,9 @@ Download low_freq.tar.bz2
 Double click to uncompress and move into working pyhthon directory
 
 Created 6 pandas dataframes for each of the 6 houses. Chose 2 appliances: lighting and washer_dryer
+
+Resources: https://github.com/nilmtk/nilmtk
+
+https://thesai.org/Downloads/Volume11No10/Paper_85-Multi_Target_Energy_Disaggregation.pdf
+
+https://courses.uscden.net/d2l/le/content/20689/viewContent/344708/View?ou=20689
