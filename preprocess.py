@@ -58,9 +58,13 @@ def select_appliances(house_data_dict):
     reduced_house_data_dict = {}
     for i in range(1, 7):
         df = house_data_dict[i]
-        l_wd_cols = [col for col in df.columns if 'lighting' in col]
-        l_wd_cols += [col for col in df.columns if 'washer_dryer' in col]
-        l_wd_cols += [col for col in df.columns if 'mains' in col]
+        l_wd_cols = []
+        for col in df.columns:
+            if 'lighting' in col or 'washer_dryer' in col or 'mains' in col:
+                l_wd_cols.append(col)
+        # l_wd_cols = [col for col in df.columns if 'lighting' in col]
+        # l_wd_cols += [col for col in df.columns if 'washer_dryer' in col]
+        # l_wd_cols += [col for col in df.columns if 'mains' in col]
         df = df[l_wd_cols]
         reduced_house_data_dict[i] = df
 
