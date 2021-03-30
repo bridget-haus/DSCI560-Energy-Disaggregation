@@ -13,7 +13,6 @@ I use abbreviation l_wd to stand for lighting/washer_dryer
 cwd = os.getcwd()
 path = f'{cwd}/'
 
-
 def gather_all_files(path):
 
     all_files = []
@@ -69,20 +68,30 @@ def select_appliances(house_data_dict):
     reduced_house_data_dict = {}
     for i in range(1, 7):
         df = house_data_dict[i]
-        l_wd_cols = [col for col in df.columns if 'lighting' in col]
-        l_wd_cols += [col for col in df.columns if 'washer_dryer' in col]
+        l_wd_cols = []
+        for col in df.columns:
+            if 'lighting' in col or 'washer_dryer' in col or 'mains' in col:
+                l_wd_cols.append(col)
+        # l_wd_cols = [col for col in df.columns if 'lighting' in col]
+        # l_wd_cols += [col for col in df.columns if 'washer_dryer' in col]
+        # l_wd_cols += [col for col in df.columns if 'mains' in col]
         df = df[l_wd_cols]
         reduced_house_data_dict[i] = df
 
     return reduced_house_data_dict
 
+def get_preproccess_data():
+    all_files = gather_all_files(path)
+    house_data_dict = create_dataframes(all_files)
+    imputed_data_dict = most_freq_imputation(house_data_dict)
+    return imputed_data_dict
 
-all_files = gather_all_files(path)
-house_data_dict = create_dataframes(all_files)
-imputed_data_dict = most_freq_imputation(house_data_dict)
 
-for i in range(1, 7):
+def main():
+    imputed_data_dict = get_preproccess_data()
+    for i in range(1, 7):
+    	print(f'House {i} Shape: {imputed_data_dict[i].shape}')
+    	print(f'First 10 Rows House {i}: {imputed_data_dict[i].head(10)}')
 
-    print(f'House {i} Shape: {imputed_data_dict[i].shape}')
-    print(f'First 10 Rows House {i}: {imputed_data_dict[i].head(10)}')
-
+if __name__ == "__main__" :
+    main()
