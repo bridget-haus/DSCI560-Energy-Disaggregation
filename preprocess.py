@@ -13,6 +13,7 @@ I use abbreviation l_wd to stand for lighting/washer_dryer
 cwd = os.getcwd()
 path = f'{cwd}/'
 
+
 def gather_all_files(path):
 
     all_files = []
@@ -80,18 +81,23 @@ def select_appliances(house_data_dict):
 
     return reduced_house_data_dict
 
+
 def get_preproccess_data():
+
     all_files = gather_all_files(path)
     house_data_dict = create_dataframes(all_files)
     imputed_data_dict = most_freq_imputation(house_data_dict)
+
     return imputed_data_dict
 
 
 def main():
+
     imputed_data_dict = get_preproccess_data()
     for i in range(1, 7):
-    	print(f'House {i} Shape: {imputed_data_dict[i].shape}')
-    	print(f'First 10 Rows House {i}: {imputed_data_dict[i].head(10)}')
+        print(f'House {i} Shape: {imputed_data_dict[i].shape}')
+        print(f'First 10 Rows House {i}: {imputed_data_dict[i].head(10)}')
+
 
 if __name__ == "__main__" :
     main()
