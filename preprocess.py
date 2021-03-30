@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from sklearn.impute import SimpleImputer
 
 """
 Data is organized into a dictionary where key=house number and value= pandas dataframe for that house
@@ -42,7 +43,7 @@ def create_dataframes(all_files):
 
             data = pd.read_table(f'{file}/channel_{i+1}.dat', sep=' ', names=['timestamp', labels[i]])
             data['timestamp'] = data['timestamp'].astype("datetime64[s]")
-            df = pd.merge(df, data, how='inner', on='timestamp')
+            df = pd.merge(df, data, how='outer', on='timestamp')
 
         df = df.set_index(df['timestamp'].values)
         df.drop(['timestamp'], axis=1, inplace=True)
@@ -52,6 +53,15 @@ def create_dataframes(all_files):
         house_num += 1
 
     return house_data_dict
+
+
+def most_freq_imputation(house_data_dict):
+
+    imputed_data_dict = {}
+    for i in range(1, 7):
+        imputed_data_dict[i] = house_data_dict[i].apply(lambda x: x.fillna(x.value_counts().index[0]))
+
+    return imputed_data_dict
 
 
 def select_appliances(house_data_dict):
@@ -69,10 +79,10 @@ def select_appliances(house_data_dict):
 
 all_files = gather_all_files(path)
 house_data_dict = create_dataframes(all_files)
-reduced_house_data_dict = select_appliances(house_data_dict)
+imputed_data_dict = most_freq_imputation(house_data_dict)
 
 for i in range(1, 7):
 
-    print(f'House {i} Shape: {reduced_house_data_dict[i].shape}')
-    print(f'First 3 Rows House {i}: {reduced_house_data_dict[i].head(3)}')
+    print(f'House {i} Shape: {imputed_data_dict[i].shape}')
+    print(f'First 10 Rows House {i}: {imputed_data_dict[i].head(10)}')
 
