@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-from sklearn.impute import SimpleImputer
 
 """
 Data is organized into a dictionary where key=house number and value= pandas dataframe for that house
@@ -36,32 +35,25 @@ def create_dataframes(all_files):
             for i in range(len(labels)):
                 labels[i] = labels[i].replace(' ', '_')
 
-        df = pd.read_table(f'{file}/channel_1.dat', sep=' ', names=['timestamp', labels[0]])
+        df = pd.read_table(f'{file}/channel_1.dat', sep=' ', names=['timestamp', labels[0]], dtype={labels[0]: 'float64'})
         df['timestamp'] = df['timestamp'].astype("datetime64[s]")
 
         for i in range(1, len(labels)):
 
-            data = pd.read_table(f'{file}/channel_{i+1}.dat', sep=' ', names=['timestamp', labels[i]])
+            data = pd.read_table(f'{file}/channel_{i+1}.dat', sep=' ', names=['timestamp', labels[i]], dtype={labels[i]: 'float64'})
             data['timestamp'] = data['timestamp'].astype("datetime64[s]")
             df = pd.merge(df, data, how='outer', on='timestamp')
 
         df = df.set_index(df['timestamp'].values)
         df.drop(['timestamp'], axis=1, inplace=True)
         df.index.name = 'timestamp'
+        df.fillna(method='ffill', inplace=True)
+        df.fillna(method='bfill', inplace=True)
 
         house_data_dict[house_num] = df
         house_num += 1
 
     return house_data_dict
-
-
-def most_freq_imputation(house_data_dict):
-
-    imputed_data_dict = {}
-    for i in range(1, 7):
-        imputed_data_dict[i] = house_data_dict[i].apply(lambda x: x.fillna(x.value_counts().index[0]))
-
-    return imputed_data_dict
 
 
 def select_appliances(house_data_dict):
@@ -73,9 +65,6 @@ def select_appliances(house_data_dict):
         for col in df.columns:
             if 'lighting' in col or 'washer_dryer' in col or 'mains' in col:
                 l_wd_cols.append(col)
-        # l_wd_cols = [col for col in df.columns if 'lighting' in col]
-        # l_wd_cols += [col for col in df.columns if 'washer_dryer' in col]
-        # l_wd_cols += [col for col in df.columns if 'mains' in col]
         df = df[l_wd_cols]
         reduced_house_data_dict[i] = df
 
@@ -86,17 +75,34 @@ def get_preproccess_data():
 
     all_files = gather_all_files(path)
     house_data_dict = create_dataframes(all_files)
-    imputed_data_dict = most_freq_imputation(house_data_dict)
 
-    return imputed_data_dict
+    return house_data_dict
+
+
+def write_to_file(house_data_dict):
+
+    for i in range(1, 7):
+        house_data_dict[i].to_csv(f'House{i}.txt')
+
+
+def read_from_file():
+
+    house_data_dict = {}
+    for i in range(1, 7):
+        data = pd.read_csv(f'House{i}.txt')
+        house_data_dict[i] = data
+
+    return house_data_dict
 
 
 def main():
 
-    imputed_data_dict = get_preproccess_data()
+    house_data_dict = get_preproccess_data()
+    write_to_file(house_data_dict)
+    read_data_dict = read_from_file()
     for i in range(1, 7):
-        print(f'House {i} Shape: {imputed_data_dict[i].shape}')
-        print(f'First 10 Rows House {i}: {imputed_data_dict[i].head(10)}')
+        print(f'House {i} Shape: {read_data_dict[i].shape}')
+        print(f'First 10 Rows House {i}: {read_data_dict[i].head(10)}')
 
 
 if __name__ == "__main__" :
