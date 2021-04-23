@@ -1,0 +1,127 @@
+.App {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+.App-logo {
+  margin-top: 2vmin;
+  margin-bottom: 0;
+  height: .5vmin;
+  width: 5vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #abccc1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /*justify-content: flex-start;*/
+  font-size: calc(15px + 2vmin);
+  font-family: serif;
+  color: white;
+  width: 100%;
+  height: 25%;
+}
+
+.App-nav{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.Content{
+  display: flex;
+  flex-direction: row;
+  align-items:flex-start;
+  width: 100%;
+  height: 75%;
+  /*padding: 1%;*/
+}
+
+h3{
+  margin-top: 0;
+  margin-bottom: 2%;
+  font-size: 1.3em;
+}
+
+#side-content{
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  width: 20%;
+  height: 80vh;
+  border-right: solid .2em;
+  padding-right: 1%;
+}
+
+.Info-Container{
+  height: 100%;
+  align-items: center;
+  margin: 10% 5% 5% 5%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20%;
+}
+
+.Info-Container:hover{
+  background-color: #e8f0ee;
+}
+
+#main-content{
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 2%;
+}
+
+.Chart-Container{
+  width: 90%;
+  padding: 1% 5% 1% 5%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#main-chart{
+  width: 80%;
+  height: 40%;
+}
+
+#sub-charts{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  height: 50%;
+
+}
+
+.Sub-Chart{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 50%;
+}
+
+a{
+  font-size: .8em;
+  margin-bottom: 5%;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,33 @@
+[
+  {
+    "appliance": "Overall",
+    "usage": 20,
+    "user": "me"
+  },
+  {
+    "appliance": "Lighting",
+    "usage": 10,
+    "user": "me"
+  },
+  {
+    "appliance": "Washer/Dryer",
+    "usage": 10,
+    "user": "me"
+  },
+
+  {
+    "appliance": "Overall",
+    "usage": 30,
+    "user": "Neighbors"
+  },
+  {
+    "appliance": "Lighting",
+    "usage": 20,
+    "user": "Neighbors"
+  },
+  {
+    "appliance": "Washer/Dryer",
+    "usage": 10,
+    "user": "Neighbors"
+  }
+]

@@ -1,0 +1,22 @@
+.area-chart{
+    margin: 3%;
+    width: 50%;
+    height: 100%;
+}
+
+g.wrapper{
+    /*transform: translate(0, 0);*/
+    height: 400px;
+}
+
+#main-chart h3{
+    text-align: left;
+}
+
+#main-chart{
+    height: 50vh;
+}
+
+#daily-chart{
+    margin-top: 5vh;
+}

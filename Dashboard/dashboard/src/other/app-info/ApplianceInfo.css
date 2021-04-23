@@ -1,0 +1,27 @@
+.Appliance-Icon{
+    font-size: 1.5em;
+    vertical-align: baseline;
+    color: #616161;
+    margin-right: .4em;
+}
+
+
+#appliance-list{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 3%;
+    width: 80%;
+    /*margin: 2% 10% 2% 10%;*/
+}
+
+.Appliance{
+    display: inline-flex;
+    align-items: center;
+    margin: 4%;
+    width: 100%;
+}
+
+#app{
+    border-top: solid 2px;
+}
