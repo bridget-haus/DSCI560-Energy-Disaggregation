@@ -10,56 +10,8 @@ import warnings
 warnings.filterwarnings("ignore")
 import glob
 import matplotlib.pyplot as plt
+import math
 import pickle5 as pickle
-
-
-def read_label():
-
-    label = {}
-    for i in range(1, 7):
-        house = f'low_freq/house_{i}/labels.dat'
-        label[i] = {}
-        with open(house) as f:
-            for line in f:
-                split_line = line.split(' ')
-                label[i][int(split_line[0])] = split_line[1].strip() + '_' + split_line[0]
-    return label
-
-
-def read_merge_data(house, labels):
-
-    path = 'low_freq/house_{}/'.format(house)
-    file = path + 'channel_1.dat'
-    df = pd.read_table(file, sep=' ', names=['unix_time', labels[house][1]],
-                       dtype={'unix_time': 'int64', labels[house][1]: 'float64'})
-
-    num_apps = len(glob.glob(path + 'channel*'))
-    for i in range(2, num_apps + 1):
-        file = path + 'channel_{}.dat'.format(i)
-        data = pd.read_table(file, sep=' ', names=['unix_time', labels[house][i]],
-                             dtype={'unix_time': 'int64', labels[house][i]: 'float64'})
-        df = pd.merge(df, data, how='inner', on='unix_time')
-    df['timestamp'] = df['unix_time'].astype("datetime64[s]")
-    df = df.set_index(df['timestamp'].values)
-    df.drop(['unix_time', 'timestamp'], axis=1, inplace=True)
-
-    return df
-
-
-def preprocess(labels):
-
-    df = {}
-    for i in range(1, 7):
-        df[i] = read_merge_data(i, labels)
-
-    dates = {}
-    for i in range(1, 7):
-        dates[i] = [str(time)[:10] for time in df[i].index.values]
-        dates[i] = sorted(list(set(dates[i])))
-        print('House {0} data contain {1} days from {2} to {3}.'.format(i, len(dates[i]), dates[i][0], dates[i][-1]))
-        print(dates[i], '\n')
-
-    return df, dates
 
 
 def plot_each_app(df, dates, predict, y_test, title, look_back=0):
@@ -79,9 +31,9 @@ def plot_each_app(df, dates, predict, y_test, title, look_back=0):
     plt.show()
 
 
-def mse_loss(y_predict, y):
+def rmse_loss(y_predict, y):
 
-    return np.mean(np.square(y_predict - y))
+    return math.sqrt(np.mean(np.square(y_predict - y)))
 
 
 def mae_loss(y_predict, y):
@@ -117,7 +69,7 @@ def choose_appliance(appliance):
     return appliance_dict
 
 
-def train_test_split(appliance_dict):
+def train_test_split(appliance_dict, test_house):
 
     X_train = []
     Y_train = []
@@ -133,11 +85,18 @@ def train_test_split(appliance_dict):
             train_app = data[app].values
             X_train.extend(train_mains)
             Y_train.extend(train_app)
-        elif house == 5 or house == 6:
+        elif house == test_house:
             test_mains = data[['1_mains', '2_mains']].values
             test_app = data[app].values
             X_test.extend(test_mains)
             Y_test.extend(test_app)
+
+    f = f'./pkl_files/house_{test_house}.pkl'
+    with open(f, 'rb') as pickle_file:
+        data = pickle.load(pickle_file)
+    date_indexes = data.index.values
+    dates = [str(time)[:10] for time in date_indexes]
+    dates = sorted(list(set(dates)))
 
     X_train = np.asarray(X_train)
     X_test = np.asarray(X_test)
@@ -146,44 +105,59 @@ def train_test_split(appliance_dict):
 
     print(X_train.shape, Y_train.shape, X_test.shape, Y_test.shape)
 
-    return X_train, X_test, Y_train, Y_test
+    return X_train, X_test, Y_train, Y_test, data, dates, date_indexes
 
 
-def train_model(fc_model_1, X_train, X_test, Y_train, Y_test, epochs, batch_size):
+def train_model(nn_model, X_train, X_test, Y_train, Y_test, epochs, batch_size, appliance, house):
 
     adam = Adam(lr=1e-5)
-    fc_model_1.compile(loss='mean_squared_error', optimizer=adam)
+    nn_model.compile(loss='mean_squared_error', optimizer=adam)
     start = time.time()
-    checkpointer = ModelCheckpoint(filepath="./fc_light_h1_2.hdf5", verbose=0, save_best_only=True)
-    hist_fc_1 = fc_model_1.fit(X_train, Y_train,
+    checkpointer = ModelCheckpoint(filepath=f'./nn_house_{house}_{appliance}.hdf5', verbose=0, save_best_only=True)
+    hist_nn = nn_model.fit(X_train, Y_train,
                                batch_size=batch_size, verbose=1, epochs=epochs,
                                validation_split=0.33, callbacks=[checkpointer])
-    print('Finish trainning. Time: ', time.time() - start)
+    print('Finish training time: ', time.time() - start)
 
-    fc_model_1 = load_model('fc_light_h1_2.hdf5')
-    pred_fc_1 = fc_model_1.predict(X_test).reshape(-1)
-    mse_loss_fc_1 = mse_loss(pred_fc_1, Y_test)
-    mae_loss_fc_1 = mae_loss(pred_fc_1, Y_test)
+    nn_model = load_model(f'nn_house_{house}_{appliance}.hdf5')
+    prediciton = nn_model.predict(X_test).reshape(-1)
+    RMSE = rmse_loss(prediciton, Y_test)
+    MAE = mae_loss(prediciton, Y_test)
 
-    train_loss = hist_fc_1.history['loss']
-    val_loss = hist_fc_1.history['val_loss']
+    train_loss = hist_nn.history['loss']
+    val_loss = hist_nn.history['val_loss']
 
-    return pred_fc_1, mse_loss_fc_1, mae_loss_fc_1
+    return prediciton, RMSE, MAE
+
+
+def pckl_results(date_indexes, prediction, appliance, house):
+
+    results_dict = {'timestamp': list(date_indexes), 'prediction': list(prediction)}
+    results_df = pd.DataFrame(data=results_dict)
+
+    with open(f'pkl_results/nn_predict_house_{house}_{appliance}.pkl', 'wb') as f:
+        pickle.dump(results_df, f)
 
 
 def main():
 
-    appliance = 'kitchen_outlets'
-    epochs = 1
+    appliance = 'washer_dryer'
+    epochs = 10
     batch_size = 512
+    test_house = 6
 
     appliance_dict = choose_appliance(appliance)
-    X_train, X_test, Y_train, Y_test = train_test_split(appliance_dict)
-    fc_model_1 = build_fc_model()
-    pred_fc_1, mse_loss_fc_1, mae_loss_fc_1 = train_model(fc_model_1, X_train, X_test, Y_train, Y_test, epochs, batch_size)
+    X_train, X_test, Y_train, Y_test, data, dates, date_indexes = train_test_split(appliance_dict, test_house)
+    nn_model = build_fc_model()
+    prediction, RMSE, MAE = train_model(nn_model, X_train, X_test, Y_train, Y_test, epochs, batch_size, appliance, test_house)
+    pckl_results(date_indexes, prediction, appliance, test_house)
 
-    print(f'MSE on test set: {mse_loss_fc_1}')
-    print(f'MAE on the test set: {mae_loss_fc_1}')
+    print(f'RMSE on test set: {RMSE}')
+    print(f'MAE on the test set: {MAE}')
+    print(dates)
+
+    plot_each_app(data, dates, prediction, Y_test,
+                  f'True Value vs Predicted Value {appliance}', look_back=50)
 
 
 if __name__ == "__main__":
