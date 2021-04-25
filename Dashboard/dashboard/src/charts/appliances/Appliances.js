@@ -1,15 +1,17 @@
-import {PieChart} from 'react-charts-d3';
+import PieChart from "./PieChart";
+import applianceData from '../data/nn_appliances.json'
+import BarChart from "../neighbors/BarChart";
+// import './Appliances.css'
 
 function ApplianceChart () {
 
-    const data = [
-        { label: 'Washer/Dryer', value: 23 },
-        { label: 'Lighting', value: 15 },
-    ];
+
 
     return (
         <PieChart
-            data={data}
+            data={applianceData}
+            container_id={"sub-charts"}
+            id={'appliance-chart'}
         />
 
     );
