@@ -20,7 +20,7 @@ function BarChart(props) {
 
         svg.attr("viewbox", `0 0 ${width} ${height}`)
 
-        const users = [... new Set(data.map(item =>item.user))]
+        const users = [... new Set(data.map(item =>item.house))]
         const appliances = [... new Set(data.map(item =>item.appliance))]
 
         const groups = d3.scaleBand()
@@ -32,7 +32,7 @@ function BarChart(props) {
             .range([0, groups.bandwidth()])
             .padding([chartWidth * 0.001])
 
-        const y = d3.scaleLinear()
+        const y = d3.scaleSqrt()
             .range([chartHeight, 0])
             .domain([0, d3.max(data.map(d=>d.usage)) + 10]);
 
@@ -64,12 +64,12 @@ function BarChart(props) {
             .attr("transform", function(d) { return `translate(${groups(d.appliance)},0)`; })
             .append("rect")
             .attr("width", subGroups.bandwidth())
-            .attr("x", d => subGroups(d.user))
+            .attr("x", d => subGroups(d.house))
             .transition()
             .duration(400)
             .attr("y", d => y(d.usage))
             .attr("height", d => chartHeight - y(d.usage))
-            .style("fill", d => color(d.user))
+            .style("fill", d => color(d.house))
 
             // .on("mouseover", function(d) {
             //     d3.select(this).style("fill", d3.rgb(color(d.usage)).darker(2));
