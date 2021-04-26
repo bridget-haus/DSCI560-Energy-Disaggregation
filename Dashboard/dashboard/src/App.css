@@ -1,8 +1,9 @@
 .App {
   text-align: center;
   width: 100%;
-  height: 100%;
+  height: 98%;
   background-color: floralwhite;
+  padding-bottom: 2%;
 }
 
 .App-logo {
@@ -23,19 +24,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /*justify-content: flex-start;*/
-  font-size: calc(25px + 2vmin);
+  font-size: calc(10px + 2vmin);
   font-family: serif;
-  color: #abccc1;
+  color: #235347;
   width: 100%;
-  height: 25%;
+  height: 13vh;
+  padding-top: 1%;
 }
 
-.App-nav{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+h1{
+  margin-top: 0;
 }
 
 .Content{
@@ -44,12 +42,10 @@
   align-items:flex-start;
   width: 100%;
   height: 75%;
-  /*padding: 1%;*/
 }
 
-h3{
-  margin-top: 2%;
-  margin-bottom: 2%;
+.Chart-Container h3{
+  margin: 1% 0 5% 0;
   font-size: 1.3em;
 }
 
@@ -57,71 +53,65 @@ h3{
   display: flex;
   flex-direction: column;
   align-content: flex-start;
-  width: 20%;
+  width: 25vw;
   height: 80vh;
-  border-right: solid .2em;
-  padding-right: 1%;
+  border-right: solid .2em #CCCCCC;
 }
 
 .Info-Container{
-  height: 100%;
+  height: 30%;
   align-items: center;
-  margin: 10% 5% 5% 5%;
+  margin: 5%;
   display: flex;
   flex-direction: column;
-  padding-top: 20%;
 }
 
-.Info-Container:hover{
-  background-color: #e8f0ee;
+.Info-Container h3{
+  margin-top: 5%;
+  margin-bottom: 2%;
 }
 
 #main-content{
-  width: 80%;
+  width: 70vw;
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 2%;
+  margin: 1%;
+  align-items: center;
 }
 
 .Chart-Container{
-  width: 90%;
-  padding: 1% 5% 1% 5%;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
 }
 
 #main-chart{
-  width: 80%;
-  height: 40%;
+  height: 20%;
+  align-items: center;
 }
 
 #sub-charts{
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
-  height: 50%;
+  justify-content: space-evenly;
+  margin-top: 5%;
 
 }
 
 .Sub-Chart{
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  width: 50%;
+  height: 30vh;
+  width: 40vw;
 }
 
 a{
   font-size: .8em;
-  margin-bottom: 5%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+h2{
+  margin: 0 3% 3% 3%;
+  text-align: left;
 }

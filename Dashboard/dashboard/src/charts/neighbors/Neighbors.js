@@ -7,7 +7,7 @@ function NeighborChart () {
     return (
         <BarChart
             data={neighborData}
-            container_id={"sub-charts"}
+            container_id={"#neighbors-chart"}
             id={'neighbor-chart'}
         />
 

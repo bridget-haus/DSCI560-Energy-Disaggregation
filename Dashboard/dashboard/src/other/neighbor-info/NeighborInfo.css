@@ -1,0 +1,17 @@
+div#neighbor{
+   border-top: solid 2px #CCCCCC;
+
+}
+
+#neighbor-list{
+   flex-direction: column;
+   justify-content: flex-start;
+   width: 70%;
+   margin-top: 10%;
+}
+
+.neighbor-line{
+   display: flex;
+   justify-content: space-between;
+   height:30%;
+}

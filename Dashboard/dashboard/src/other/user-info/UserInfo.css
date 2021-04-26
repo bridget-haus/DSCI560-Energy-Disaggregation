@@ -1,9 +1,9 @@
 #user-profile{
-    padding: 0 3% 5% 2%;
+    padding: 0 3% 2% 2%;
 }
 
 img {
-    width: 70%;
-    height: auto;
-    margin-top: 15%;
+    width: 60%;
+    height: 20vh;
+    margin-top: 6%;
 }

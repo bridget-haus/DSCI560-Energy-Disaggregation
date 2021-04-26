@@ -10,17 +10,21 @@ function PieChart(props) {
 
     useEffect(() => {
 
-        const container = d3.select(ref.current);
+        const parent = d3.select(props.container_id);
+        const width = parent.style("width").slice(0,-2);
+        const height = parent.style("height").slice(0,-2);
 
-        const svg = container.append("svg")
-            .attr("class", "Pie-Chart-Svg");
-
-        const width = svg.style("width").slice(0,-2);
-        const height = svg.style("height").slice(0,-2);
         const chartWidth = width * props.widthMult;
         const chartHeight = height * props.heightMult;
 
-        svg.attr("viewbox", `0 0 ${width} ${height}`)
+        const container = d3.select(ref.current);
+
+        const svg = container.append("svg")
+            .attr("class", "Pie-Chart-Svg")
+            .attr('id', props.svg_id)
+            .attr('width', width)
+            .attr('height', chartHeight);
+
 
         const appliances = [... new Set(data.map(item =>item.appliance))]
 
@@ -30,7 +34,7 @@ function PieChart(props) {
 
         function update(data) {
 
-            let radius = Math.min(chartWidth, chartHeight) / 2
+            let radius = Math.min(chartWidth, chartHeight) / 2.5
             // Compute the position of each group on the pie:
             let piece = d3.pie()
                 .value(function(d) {return d.usage; })
@@ -38,14 +42,16 @@ function PieChart(props) {
 
             // map to data
             let pie = svg.append('g')
-                .attr('transform', `translate(${chartWidth/3}, ${chartHeight/2})`)
+                .attr('transform', `translate(${chartWidth/2}, ${chartHeight/2.5})`)
                 .selectAll("path")
                 .data(piece(data))
 
+            let text;
             // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
             pie
                 .enter()
                 .append('path')
+                .attr('class', 'pie-piece')
                 .merge(pie)
                 .transition()
                 .duration(1000)
@@ -55,8 +61,24 @@ function PieChart(props) {
                 )
                 .attr('fill', function(d){ return(color(d.data.appliance)) })
                 .attr("stroke", "white")
-                .style("stroke-width", "2px")
-                .style("opacity", 1)
+                .attr("opacity", 0.8);
+
+            d3.selectAll('.pie-piece')
+                .on("mouseover", function(d) {
+
+                    let mouse = d3.event.target;
+                    text = pie.append("text")
+                        .attr("x", mouse.x)
+                        .attr("y", mouse.y)
+                        .style("text-anchor", "middle")
+                        .style("fill", "blue")
+                        .attr("class", "on")
+                        .text(d.data.usage);
+                })
+
+                .on("mouseout", function(d) {
+                    text.remove();
+                });
 
             svg.append("g")
                 .attr("class", "legend")
@@ -68,19 +90,19 @@ function PieChart(props) {
                 .append("circle")
                 .attr("class", "legendDots")
                 .attr("fill", d => color(d.appliance))
-                .attr("cx", chartWidth * 0.8)
+                .attr("cx", chartWidth * 0.75)
                 .attr("cy", function(d,i){ return (i + 1) * (chartHeight * 0.15)})
-                .attr("r", chartHeight * 0.03)
+                .attr("r", chartHeight * 0.015)
 
             svg.selectAll(".legendLine")
                 .append("text")
                 .text(d => d.appliance)
-                .attr("x", chartWidth * 0.9)
+                .attr("x", chartWidth * 0.78)
                 .attr("y", function(d,i){ return (i + 1) * (chartHeight * 0.15)})
                 .attr("text-anchor", "left")
                 .attr("fill", d => color(d.appliance))
                 .style("alignment-baseline", "middle")
-                .attr("font-size", chartHeight * 0.1)
+                .attr("font-size", chartHeight * 0.07)
             // remove the group that is not present anymore
             pie
                 .exit()
@@ -104,8 +126,8 @@ function PieChart(props) {
 
 PieChart.defaultProps = {
 
-    heightMult: 0.9,
-    widthMult: 0.8,
+    heightMult: 1,
+    widthMult: 0.9,
 
 }
 

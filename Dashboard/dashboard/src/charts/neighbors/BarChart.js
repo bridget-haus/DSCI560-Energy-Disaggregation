@@ -8,32 +8,37 @@ function BarChart(props) {
 
     useEffect(() => {
 
+        const parent = d3.select(props.container_id);
+        const width = parent.style("width").slice(0,-2);
+        const height = parent.style("height").slice(0,-2);
+
+        const chartWidth = width * props.widthMult;
+        const chartHeight = height * props.heightMult;
+        const chartMargin = chartWidth * 0.001;
+
         const container = d3.select(ref.current);
 
         const svg = container.append("svg")
-            .attr("class", "Bar-Chart-Svg");
-
-        const width = svg.style("width").slice(0,-2);
-        const height = svg.style("height").slice(0,-2);
-        const chartWidth = width * props.widthMult;
-        const chartHeight = height * props.heightMult;
-
-        svg.attr("viewbox", `0 0 ${width} ${height}`)
+            .attr("class", "Bar-Chart-Svg")
+            .attr('transform', `translate(${chartMargin}, ${0})`)
+            .attr('id', props.svg_id)
+            .attr('width', chartWidth)
+            .attr('height', chartHeight);
 
         const users = [... new Set(data.map(item =>item.house))]
         const appliances = [... new Set(data.map(item =>item.appliance))]
 
         const groups = d3.scaleBand()
             .domain(appliances)
-            .range([0, chartWidth])
+            .range([0, chartWidth * 0.8])
 
         const subGroups = d3.scaleBand()
             .domain(users)
             .range([0, groups.bandwidth()])
-            .padding([chartWidth * 0.001])
+            .padding([chartWidth * 0.0005])
 
         const y = d3.scaleSqrt()
-            .range([chartHeight, 0])
+            .range([chartHeight - chartMargin, 0])
             .domain([0, d3.max(data.map(d=>d.usage)) + 10]);
 
         const color = d3.scaleOrdinal()
@@ -47,10 +52,15 @@ function BarChart(props) {
         const yAxis = d3.axisLeft()
             .scale(y);
 
+        let tooltip = svg.append('g');
+        let tooltipText = tooltip.append('text');
+
         svg.append("g")
             .attr("class", "x axis")
-            .attr("transform", `translate(${0}, ${chartHeight})`)
-            .call(xAxis);
+            .attr('fill', 'black')
+            .attr("transform", `translate(${0}, ${chartHeight*0.95})`)
+            .call(xAxis)
+
 
         svg.append("g")
             .attr("class", "y axis")
@@ -63,17 +73,23 @@ function BarChart(props) {
             .attr("class", "slice")
             .attr("transform", function(d) { return `translate(${groups(d.appliance)},0)`; })
             .append("rect")
+            .attr('class', 'bar')
             .attr("width", subGroups.bandwidth())
             .attr("x", d => subGroups(d.house))
             .transition()
             .duration(400)
             .attr("y", d => y(d.usage))
-            .attr("height", d => chartHeight - y(d.usage))
-            .style("fill", d => color(d.house))
+            .attr("height", d => chartHeight * 0.95 - y(d.usage))
+            .attr("fill", d => color(d.house))
+            // .on('mouseenter', d => {
+            //
+            //     let mouse = d3.event.target;
+            //     tooltipText
+            //         .attr("x", d => subGroups(d.house))
+            //         .attr('y', d => y(d.usage))
+            //         .text(d => d.usage)
+            // })
 
-            // .on("mouseover", function(d) {
-            //     d3.select(this).style("fill", d3.rgb(color(d.usage)).darker(2));
-            // });
 
         svg.append("g")
             .attr("class", "legend")
@@ -85,14 +101,14 @@ function BarChart(props) {
             .append("circle")
             .attr("class", "legendDots")
             .attr("fill", d => color(d))
-            .attr("cx", chartWidth)
+            .attr("cx", chartWidth * 0.8)
             .attr("cy", function(d,i){ return (i + 1) * (chartHeight * 0.15)})
-            .attr("r", chartHeight * 0.03)
+            .attr("r", chartWidth * 0.01)
 
         svg.selectAll(".legendLine")
             .append("text")
             .text(d => d)
-            .attr("x", chartWidth + chartHeight * 0.07)
+            .attr("x", chartWidth * 0.82)
             .attr("y", function(d,i){ return (i + 1) * (chartHeight * 0.15)})
             .attr("text-anchor", "left")
             .attr("fill", d => color(d))
@@ -112,8 +128,8 @@ function BarChart(props) {
 
 BarChart.defaultProps = {
 
-    heightMult: 0.9,
-    widthMult: 0.8,
+    heightMult: 0.8,
+    widthMult: 0.7,
 
 }
 

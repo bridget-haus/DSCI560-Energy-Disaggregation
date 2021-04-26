@@ -10,7 +10,7 @@ function ApplianceChart () {
     return (
         <PieChart
             data={applianceData}
-            container_id={"sub-charts"}
+            container_id={"#app-chart"}
             id={'appliance-chart'}
         />
 

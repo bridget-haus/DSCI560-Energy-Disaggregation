@@ -1,11 +1,4 @@
-.area-chart{
-    margin: 3%;
-    width: 50%;
-    height: 100%;
-}
-
 g.wrapper{
-    /*transform: translate(0, 0);*/
     height: 400px;
 }
 
@@ -14,9 +7,12 @@ g.wrapper{
 }
 
 #main-chart{
-    height: 50vh;
+    height: 40vh;
 }
 
 #daily-chart{
-    margin-top: 5vh;
+    width:90%;
+    padding: 0 5% 0 5%;
+    align-items: center;
 }
+
