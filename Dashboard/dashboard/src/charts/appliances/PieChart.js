@@ -38,7 +38,7 @@ function PieChart(props) {
 
             // map to data
             let pie = svg.append('g')
-                .attr('transform', `translate(${chartWidth/2}, ${chartHeight/2})`)
+                .attr('transform', `translate(${chartWidth/3}, ${chartHeight/2})`)
                 .selectAll("path")
                 .data(piece(data))
 
@@ -58,6 +58,29 @@ function PieChart(props) {
                 .style("stroke-width", "2px")
                 .style("opacity", 1)
 
+            svg.append("g")
+                .attr("class", "legend")
+                .selectAll(".legend")
+                .data(data)
+                .enter()
+                .append("g")
+                .attr("class", "legendLine")
+                .append("circle")
+                .attr("class", "legendDots")
+                .attr("fill", d => color(d.appliance))
+                .attr("cx", chartWidth * 0.8)
+                .attr("cy", function(d,i){ return (i + 1) * (chartHeight * 0.15)})
+                .attr("r", chartHeight * 0.03)
+
+            svg.selectAll(".legendLine")
+                .append("text")
+                .text(d => d.appliance)
+                .attr("x", chartWidth * 0.9)
+                .attr("y", function(d,i){ return (i + 1) * (chartHeight * 0.15)})
+                .attr("text-anchor", "left")
+                .attr("fill", d => color(d.appliance))
+                .style("alignment-baseline", "middle")
+                .attr("font-size", chartHeight * 0.1)
             // remove the group that is not present anymore
             pie
                 .exit()
