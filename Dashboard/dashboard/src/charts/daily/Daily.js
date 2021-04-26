@@ -1,7 +1,7 @@
 import './Daily.css'
 // import {AreaChart} from "react-charts-d3";
 import AreaChart from './AreaChart';
-import dailyData from './daily-usage.json'
+import dailyData from '../data/nn_houses.json'
 
 function DailyChart () {
 
