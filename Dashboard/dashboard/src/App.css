@@ -2,6 +2,7 @@
   text-align: center;
   width: 100%;
   height: 100%;
+  background-color: floralwhite;
 }
 
 .App-logo {
@@ -19,14 +20,13 @@
 }
 
 .App-header {
-  background-color: #abccc1;
   display: flex;
   flex-direction: column;
   align-items: center;
   /*justify-content: flex-start;*/
-  font-size: calc(15px + 2vmin);
+  font-size: calc(25px + 2vmin);
   font-family: serif;
-  color: white;
+  color: #abccc1;
   width: 100%;
   height: 25%;
 }
@@ -48,7 +48,7 @@
 }
 
 h3{
-  margin-top: 0;
+  margin-top: 2%;
   margin-bottom: 2%;
   font-size: 1.3em;
 }
